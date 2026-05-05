@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cao Thanh Huy — Backend Engineer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    html, body { margin: 0; padding: 0; background: #fafbfc; transition: background .25s; }
+    body.dark { background: #0a1019; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; }
+    a { color: inherit; }
+    /* nice scroll on the page itself */
+  </style>
+  <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+  <script src="./data.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    function PFTimeline({ theme }) {
+      const D = window.PORTFOLIO_DATA;
+      const tagColor = (t) => ({
+        current: theme.accent,
+        build: '#7c3aed',
+        learn: '#0891b2',
+        milestone: '#ea580c',
+      }[t] || theme.dim);
+      return (
+        <div style={{ position: 'relative' }}>
+          <div style={{
+            position: 'absolute', left: 11, top: 8, bottom: 8, width: 2,
+            background: theme.border,
+          }} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            {D.timeline.map((t, i) => (
+              <div key={i} style={{ display: 'flex', gap: 20, position: 'relative' }}>
+                <div style={{
+                  width: 24, height: 24, borderRadius: '50%',
+                  background: t.tag === 'current' ? tagColor(t.tag) : theme.paper,
+                  border: `2px solid ${tagColor(t.tag)}`,
+                  flexShrink: 0, marginTop: 2, position: 'relative', zIndex: 1,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  {t.tag === 'current' && (
+                    <span style={{
+                      width: 8, height: 8, borderRadius: '50%', background: '#fff',
+                    }} />
+                  )}
+                </div>
+                <div style={{ flex: 1, paddingBottom: 4 }}>
+                  <div style={{
+                    display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 4,
+                    flexWrap: 'wrap',
+                  }}>
+                    <span style={{ fontFamily: theme.mono, fontSize: 11, color: theme.dim, letterSpacing: 0.5 }}>
+                      {t.period}
+                    </span>
+                    <span style={{
+                      padding: '2px 8px', background: tagColor(t.tag) + '22',
+                      color: tagColor(t.tag), fontFamily: theme.mono, fontSize: 10,
+                      borderRadius: 3, textTransform: 'uppercase', letterSpacing: 0.8, fontWeight: 600,
+                    }}>{t.tag}</span>
+                  </div>
+                  <div style={{
+                    fontFamily: theme.sans, fontSize: 16, fontWeight: 600, color: theme.fg,
+                    marginBottom: 2,
+                  }}>{t.title}</div>
+                  <div style={{ fontFamily: theme.sans, fontSize: 13, color: theme.dim, marginBottom: 6 }}>
+                    {t.org}
+                  </div>
+                  <div style={{
+                    fontFamily: theme.sans, fontSize: 13, color: theme.fg, lineHeight: 1.55,
+                    opacity: 0.85,
+                  }}>{t.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function PFBlog({ theme }) {
+      const D = window.PORTFOLIO_DATA;
+      return (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          {D.blog.map((b, i) => (
+            <a key={i} href="#" style={{
+              background: theme.paper, border: `1px solid ${theme.border}`, borderRadius: 10,
+              padding: 20, textDecoration: 'none', display: 'flex', flexDirection: 'column',
+              transition: 'transform .15s, border-color .15s, box-shadow .15s',
+            }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = theme.accent;
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = theme.border;
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                <span style={{
+                  padding: '3px 10px', background: theme.accent + '20', color: theme.accent,
+                  fontFamily: theme.mono, fontSize: 10, borderRadius: 999, fontWeight: 600,
+                  textTransform: 'uppercase', letterSpacing: 0.8,
+                }}>{b.tag}</span>
+                <span style={{ fontFamily: theme.mono, fontSize: 11, color: theme.dim }}>
+                  {b.readTime}
+                </span>
+              </div>
+              <h4 style={{
+                fontFamily: theme.sans, fontWeight: 600, fontSize: 17, color: theme.fg,
+                margin: '0 0 10px', lineHeight: 1.3, textWrap: 'balance',
+              }}>{b.title}</h4>
+              <p style={{
+                fontFamily: theme.sans, fontSize: 13, color: theme.dim, lineHeight: 1.55,
+                margin: '0 0 16px', flex: 1,
+              }}>{b.excerpt}</p>
+              <div style={{
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                paddingTop: 12, borderTop: `1px solid ${theme.border}`,
+              }}>
+                <span style={{ fontFamily: theme.mono, fontSize: 11, color: theme.dim }}>{b.date}</span>
+                <span style={{ fontFamily: theme.sans, fontSize: 12, color: theme.accent, fontWeight: 600 }}>
+                  Read →
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+      );
+    }
+
+    const { useState, useEffect } = React;
+    const D = window.PORTFOLIO_DATA;
+
+    const lightTheme = {
+      bg: '#fafbfc', paper: '#ffffff', fg: '#0a1628', dim: '#64748b',
+      accent: '#1d4ed8', accentLight: '#dbeafe', border: '#e2e8f0',
+      borderStrong: '#cbd5e1', sans: '"Inter", sans-serif', mono: '"JetBrains Mono", monospace',
+      ink: '#0a1628', shadow: '0 1px 3px rgba(0,0,0,0.04)',
+    };
+    const darkTheme = {
+      bg: '#0a1019', paper: '#111827', fg: '#f1f5f9', dim: '#94a3b8',
+      accent: '#60a5fa', accentLight: '#1e3a8a', border: '#1e293b',
+      borderStrong: '#334155', sans: '"Inter", sans-serif', mono: '"JetBrains Mono", monospace',
+      ink: '#f1f5f9', shadow: '0 1px 3px rgba(0,0,0,0.4)',
+    };
+
+    function ThemeToggle({ dark, setDark }) {
+      return (
+        <button
+          onClick={() => setDark(!dark)}
+          aria-label="Toggle theme"
+          style={{
+            width: 38, height: 38, borderRadius: 8,
+            background: dark ? '#1e293b' : '#f1f5f9',
+            border: `1px solid ${dark ? '#334155' : '#e2e8f0'}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', transition: 'all .2s',
+          }}
+        >
+          {dark ? (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fde68a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+            </svg>
+          ) : (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a1628" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+          )}
+        </button>
+      );
+    }
+
+    function Header({ t, dark, setDark }) {
+      return (
+        <div style={{
+          padding: '20px 40px', borderBottom: `1px solid ${t.border}`,
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          background: t.paper, position: 'sticky', top: 0, zIndex: 50,
+          backdropFilter: 'blur(8px)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: 8, background: t.ink,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: t.bg, fontFamily: t.mono, fontSize: 14, fontWeight: 700,
+            }}>CH</div>
+            <div>
+              <div style={{ fontWeight: 600, fontSize: 15, color: t.fg }}>{D.name}</div>
+              <div style={{ fontFamily: t.mono, fontSize: 11, color: t.dim }}>{D.role.toLowerCase()}</div>
+            </div>
+          </div>
+          <nav style={{ display: 'flex', gap: 24, fontSize: 13 }}>
+            {['Stack', 'Projects', 'Timeline', 'Writing', 'Contact'].map(l => (
+              <a key={l} href={`#${l.toLowerCase()}`} style={{
+                textDecoration: 'none', color: t.dim, fontWeight: 500,
+              }} onMouseEnter={e => e.target.style.color = t.fg}
+                 onMouseLeave={e => e.target.style.color = t.dim}>{l}</a>
+            ))}
+          </nav>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <ThemeToggle dark={dark} setDark={setDark} />
+            <a href="./Huy-Cao-Thanh-TopCV.pdf" download style={{
+              padding: '9px 14px', background: t.ink, color: t.bg,
+              textDecoration: 'none', borderRadius: 6, fontSize: 12, fontWeight: 600,
+            }}>↓ Resume</a>
+          </div>
+        </div>
+      );
+    }
+
+    function Hero({ t }) {
+      const [hovered, setHovered] = useState(null);
+      const nodes = [
+        { id: 'client', label: 'Client', sub: 'Web / Mobile', x: 40, y: 40, w: 110, h: 50 },
+        { id: 'gateway', label: 'API Gateway', sub: 'JWT · Rate limit', x: 220, y: 40, w: 130, h: 50 },
+        { id: 'rest', label: 'REST API', sub: 'FastAPI / Spring', x: 420, y: 10, w: 130, h: 50 },
+        { id: 'ws', label: 'WebSocket', sub: 'STOMP / Channels', x: 420, y: 90, w: 130, h: 50 },
+        { id: 'cache', label: 'Redis', sub: 'Cache · Pub/Sub', x: 220, y: 180, w: 130, h: 50 },
+        { id: 'db', label: 'PostgreSQL', sub: 'OLTP · Flyway', x: 420, y: 200, w: 130, h: 50 },
+        { id: 'queue', label: 'Celery', sub: 'Async tasks', x: 220, y: 270, w: 130, h: 50 },
+      ];
+      const edges = [
+        { from: 'client', to: 'gateway' }, { from: 'gateway', to: 'rest' },
+        { from: 'gateway', to: 'ws' }, { from: 'rest', to: 'cache' },
+        { from: 'rest', to: 'db' }, { from: 'ws', to: 'cache' },
+        { from: 'cache', to: 'queue' }, { from: 'queue', to: 'db' },
+      ];
+      const findNode = id => nodes.find(n => n.id === id);
+      const isHigh = (nid) => hovered && (hovered === nid || edges.some(e => (e.from === hovered && e.to === nid) || (e.to === hovered && e.from === nid)));
+      const edgeActive = (e) => hovered && (e.from === hovered || e.to === hovered);
+
+      return (
+        <div style={{ padding: '72px 40px 60px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: `linear-gradient(${t.border}40 1px, transparent 1px), linear-gradient(90deg, ${t.border}40 1px, transparent 1px)`,
+            backgroundSize: '24px 24px', pointerEvents: 'none', opacity: 0.6,
+          }} />
+          <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'center', maxWidth: 1280, margin: '0 auto' }}>
+            <div>
+              <div style={{
+                display: 'inline-block', padding: '5px 12px',
+                background: t.accentLight, color: t.accent,
+                fontFamily: t.mono, fontSize: 11, borderRadius: 999, marginBottom: 24, fontWeight: 600,
+              }}>// backend.engineer</div>
+              <h1 style={{
+                fontWeight: 700, fontSize: 56, lineHeight: 1.05,
+                margin: '0 0 20px', letterSpacing: -1.5, color: t.fg,
+              }}>I design <span style={{ color: t.accent }}>distributed systems</span> that scale gracefully.</h1>
+              <p style={{ fontSize: 17, lineHeight: 1.55, color: t.dim, margin: 0, maxWidth: 520 }}>
+                {D.about.short} I think in service boundaries, data flow, and failure modes — and I document the diagrams I draw.
+              </p>
+              <div style={{ display: 'flex', gap: 12, marginTop: 32 }}>
+                <a href="#projects" style={{
+                  padding: '12px 20px', background: t.accent, color: '#fff',
+                  textDecoration: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14,
+                }}>View case studies →</a>
+                <a href={D.githubUrl} target="_blank" rel="noreferrer" style={{
+                  padding: '12px 20px', background: 'transparent', color: t.fg,
+                  textDecoration: 'none', borderRadius: 8, border: `1px solid ${t.borderStrong}`,
+                  fontWeight: 600, fontSize: 14,
+                }}>GitHub</a>
+              </div>
+            </div>
+            <div style={{
+              background: t.paper, border: `1px solid ${t.border}`, borderRadius: 12,
+              padding: 16, boxShadow: t.shadow,
+            }}>
+              <div style={{
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                fontFamily: t.mono, fontSize: 11, color: t.dim, marginBottom: 12, paddingBottom: 8,
+                borderBottom: `1px solid ${t.border}`,
+              }}>
+                <span>system_architecture.svg</span>
+                <span style={{ color: hovered ? t.accent : t.dim }}>
+                  {hovered ? `→ ${findNode(hovered)?.label.toLowerCase()}` : 'hover to inspect →'}
+                </span>
+              </div>
+              <svg viewBox="0 0 600 340" style={{ width: '100%', height: 'auto', display: 'block' }}>
+                <defs>
+                  <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill={t.dim} /></marker>
+                  <marker id="arrA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill={t.accent} /></marker>
+                </defs>
+                {edges.map((e, i) => {
+                  const a = findNode(e.from), b = findNode(e.to);
+                  const x1 = a.x + a.w, y1 = a.y + a.h / 2, x2 = b.x, y2 = b.y + b.h / 2;
+                  const mid = (x1 + x2) / 2;
+                  const path = `M${x1},${y1} C${mid},${y1} ${mid},${y2} ${x2 - 4},${y2}`;
+                  const active = edgeActive(e);
+                  return <path key={i} d={path} fill="none"
+                    stroke={active ? t.accent : t.borderStrong}
+                    strokeWidth={active ? 2 : 1.5}
+                    strokeDasharray={active ? '0' : '4 3'}
+                    markerEnd={`url(#${active ? 'arrA' : 'arr'})`}
+                    style={{ transition: 'all .2s' }} />;
+                })}
+                {nodes.map(n => {
+                  const high = isHigh(n.id), isHover = hovered === n.id;
+                  return (
+                    <g key={n.id}
+                      onMouseEnter={() => setHovered(n.id)}
+                      onMouseLeave={() => setHovered(null)}
+                      style={{ cursor: 'pointer' }}>
+                      <rect x={n.x} y={n.y} width={n.w} height={n.h} rx="6"
+                        fill={isHover ? t.accent : (high ? t.accentLight : t.paper)}
+                        stroke={isHover || high ? t.accent : t.borderStrong}
+                        strokeWidth={isHover ? 2 : 1.5}
+                        style={{ transition: 'all .15s' }} />
+                      <text x={n.x + n.w/2} y={n.y + 22} textAnchor="middle"
+                        fontFamily={t.sans} fontSize="13" fontWeight="600"
+                        fill={isHover ? '#fff' : t.fg}>{n.label}</text>
+                      <text x={n.x + n.w/2} y={n.y + 38} textAnchor="middle"
+                        fontFamily={t.mono} fontSize="10"
+                        fill={isHover ? '#dbeafe' : t.dim}>{n.sub}</text>
+                    </g>
+                  );
+                })}
+              </svg>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function SectionHead({ t, num, title, sub }) {
+      return (
+        <div style={{ marginBottom: 32, display: 'flex', alignItems: 'baseline', gap: 16 }}>
+          <span style={{ fontFamily: t.mono, fontSize: 12, color: t.accent, fontWeight: 600 }}>0{num}.</span>
+          <div>
+            <h2 style={{ fontWeight: 700, fontSize: 32, margin: 0, letterSpacing: -0.8, color: t.fg }}>{title}</h2>
+            {sub && <div style={{ fontSize: 14, color: t.dim, marginTop: 4 }}>{sub}</div>}
+          </div>
+        </div>
+      );
+    }
+
+    function Stack({ t }) {
+      return (
+        <div id="stack" style={{ padding: '60px 40px', borderTop: `1px solid ${t.border}`, background: t.paper, scrollMarginTop: 80 }}>
+          <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+            <SectionHead t={t} num="1" title="Stack" sub="Tools I reach for, organized by where they live." />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+              {[
+                { label: 'Languages', icon: '⌨', items: D.stack.languages },
+                { label: 'Frameworks', icon: '◆', items: D.stack.frameworks },
+                { label: 'Data', icon: '◉', items: D.stack.data },
+                { label: 'Infrastructure', icon: '▣', items: D.stack.infra },
+              ].map(c => (
+                <div key={c.label} style={{
+                  background: t.bg, border: `1px solid ${t.border}`, borderRadius: 10, padding: 18,
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+                    <span style={{ color: t.accent, fontSize: 14 }}>{c.icon}</span>
+                    <span style={{ fontFamily: t.mono, fontSize: 11, color: t.dim, textTransform: 'uppercase', letterSpacing: 1 }}>{c.label}</span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {c.items.map(it => (
+                      <div key={it.name}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                          <span style={{ fontSize: 13, fontWeight: 600, color: t.fg }}>{it.name}</span>
+                          {it.level && <span style={{ fontFamily: t.mono, fontSize: 10, color: t.dim }}>{it.level}%</span>}
+                        </div>
+                        {it.note && <div style={{ fontSize: 11, color: t.dim, marginTop: 2 }}>{it.note}</div>}
+                        {it.level && (
+                          <div style={{ marginTop: 5, height: 3, background: t.border, borderRadius: 2 }}>
+                            <div style={{ width: `${it.level}%`, height: '100%', background: t.accent, borderRadius: 2 }} />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function ProjectMedia({ t, p }) {
+      const dark = t.bg.startsWith('#0') || t.bg.startsWith('#1');
+      const placeholderBg = dark ? '#0a1019' : '#0f172a';
+      const accentByProj = {
+        chat: '#3b82f6', realestate: '#10b981', bot: '#ef4444', data: '#a855f7',
+      };
+      const accent = accentByProj[p.id] || '#3b82f6';
+
+      // 1. Video — embed iframe (YouTube/Loom/Vimeo)
+      if (p.videoUrl) {
+        return (
+          <div style={{
+            width: '100%', aspectRatio: '16/10', borderRadius: 8, overflow: 'hidden',
+            background: '#000', border: `1px solid ${t.border}`, position: 'relative',
+          }}>
+            <iframe src={p.videoUrl}
+              style={{ width: '100%', height: '100%', border: 0 }}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen />
+            <div style={{
+              position: 'absolute', top: 10, right: 10, padding: '3px 8px',
+              background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)',
+              borderRadius: 4, fontFamily: t.mono, fontSize: 9, color: '#fff',
+              letterSpacing: 1, border: '1px solid rgba(255,255,255,0.15)',
+              display: 'flex', alignItems: 'center', gap: 5,
+            }}>
+              <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#ef4444' }}/>
+              VIDEO DEMO
+            </div>
+          </div>
+        );
+      }
+
+      // 2. Screenshot — show image
+      if (p.screenshotUrl) {
+        return (
+          <div style={{
+            width: '100%', aspectRatio: '16/10', borderRadius: 8, overflow: 'hidden',
+            background: placeholderBg, border: `1px solid ${t.border}`, position: 'relative',
+          }}>
+            <img src={p.screenshotUrl} alt={p.name + ' screenshot'}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            <div style={{
+              position: 'absolute', top: 10, right: 10, padding: '3px 8px',
+              background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)',
+              borderRadius: 4, fontFamily: t.mono, fontSize: 9, color: '#fff',
+              letterSpacing: 1, border: '1px solid rgba(255,255,255,0.15)',
+            }}>SCREENSHOT</div>
+          </div>
+        );
+      }
+
+      // 3. Empty placeholder — clear "drop demo here" slot
+      return (
+        <div style={{
+          width: '100%', aspectRatio: '16/10', borderRadius: 8, overflow: 'hidden',
+          background: placeholderBg, border: `1px dashed ${t.borderStrong}`,
+          position: 'relative',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          {/* subtle grid bg */}
+          <div style={{
+            position: 'absolute', inset: 0, opacity: 0.5,
+            backgroundImage: `linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)`,
+            backgroundSize: '20px 20px',
+          }} />
+          {/* corner accent */}
+          <div style={{
+            position: 'absolute', top: 0, left: 0, width: 60, height: 60,
+            borderTop: `2px solid ${accent}`, borderLeft: `2px solid ${accent}`,
+            opacity: 0.5, borderTopLeftRadius: 8,
+          }} />
+          <div style={{
+            position: 'absolute', bottom: 0, right: 0, width: 60, height: 60,
+            borderBottom: `2px solid ${accent}`, borderRight: `2px solid ${accent}`,
+            opacity: 0.5, borderBottomRightRadius: 8,
+          }} />
+
+          <div style={{ textAlign: 'center', position: 'relative', zIndex: 1, padding: 16 }}>
+            <div style={{
+              width: 56, height: 56, borderRadius: '50%',
+              background: `${accent}22`, border: `1.5px solid ${accent}66`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              margin: '0 auto 14px',
+            }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="5 3 19 12 5 21 5 3"/>
+              </svg>
+            </div>
+            <div style={{
+              fontFamily: t.mono, fontSize: 11, color: '#fff', letterSpacing: 1.2,
+              fontWeight: 600, marginBottom: 4,
+            }}>DEMO COMING SOON</div>
+            <div style={{
+              fontFamily: t.mono, fontSize: 10, color: '#94a3b8', letterSpacing: 0.5,
+            }}>{p.id}.mp4 · awaiting capture</div>
+          </div>
+
+          <div style={{
+            position: 'absolute', top: 10, left: 10, padding: '3px 8px',
+            background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)',
+            borderRadius: 4, fontFamily: t.mono, fontSize: 9, color: accent,
+            letterSpacing: 1, border: `1px solid ${accent}44`, fontWeight: 600,
+          }}>PLACEHOLDER</div>
+        </div>
+      );
+    }
+
+    function Project({ t, p, idx }) {
+      const reverse = idx % 2 === 1;
+      return (
+        <div style={{
+          background: t.paper, border: `1px solid ${t.border}`, borderRadius: 14,
+          padding: 0, marginBottom: 20, overflow: 'hidden', boxShadow: t.shadow,
+        }}>
+          <div style={{
+            display: 'grid', gridTemplateColumns: '1fr 1.1fr',
+            direction: reverse ? 'rtl' : 'ltr',
+          }}>
+            {/* Media side */}
+            <div style={{
+              direction: 'ltr', padding: 20, background: t.bg,
+              borderRight: reverse ? 'none' : `1px solid ${t.border}`,
+              borderLeft: reverse ? `1px solid ${t.border}` : 'none',
+              display: 'flex', flexDirection: 'column', gap: 12,
+            }}>
+              <ProjectMedia t={t} p={p} />
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {p.stack.map(s => (
+                  <span key={s} style={{
+                    fontFamily: t.mono, fontSize: 10.5, padding: '3px 9px',
+                    background: t.paper, color: t.fg, borderRadius: 4,
+                    border: `1px solid ${t.border}`, fontWeight: 500,
+                  }}>{s}</span>
+                ))}
+              </div>
+            </div>
+
+            {/* Content side */}
+            <div style={{ direction: 'ltr', padding: '28px 32px', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
+                <div style={{ fontFamily: t.mono, fontSize: 11, color: t.accent, fontWeight: 600, letterSpacing: 0.5 }}>
+                  CASE_0{idx + 1} · {String(idx + 1).padStart(2, '0')}/{String(D.projects.length).padStart(2, '0')}
+                </div>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center', fontFamily: t.mono, fontSize: 11, color: t.dim }}>
+                  <span>{p.period || p.year}</span>
+                  <span>·</span>
+                  <span style={{ color: t.fg, fontWeight: 600 }}>{p.role}</span>
+                </div>
+              </div>
+
+              <h3 style={{
+                fontWeight: 700, fontSize: 30, margin: '0 0 4px',
+                color: t.fg, letterSpacing: -0.8, lineHeight: 1.1,
+              }}>{p.name}</h3>
+              <div style={{ fontSize: 14, color: t.dim, marginBottom: 18 }}>{p.subtitle}</div>
+
+              <div style={{
+                fontSize: 13.5, lineHeight: 1.55, color: t.fg,
+                padding: '10px 14px', background: t.bg, borderRadius: 6,
+                borderLeft: `3px solid ${t.accent}`, marginBottom: 18,
+              }}>{p.problem}</div>
+
+              <div style={{ flex: 1 }}>
+                <div style={{
+                  fontFamily: t.mono, fontSize: 10, letterSpacing: 1.4, color: t.dim,
+                  marginBottom: 8, textTransform: 'uppercase', fontWeight: 600,
+                }}>↳ What I built</div>
+                <ul style={{
+                  fontSize: 13, lineHeight: 1.6, color: t.fg,
+                  margin: 0, paddingLeft: 16, listStyle: 'none',
+                }}>
+                  {p.contribution.map((c, i) => (
+                    <li key={i} style={{ marginBottom: 6, position: 'relative' }}>
+                      <span style={{
+                        position: 'absolute', left: -16, top: 7, width: 6, height: 6,
+                        background: t.accent, borderRadius: 1,
+                      }} />
+                      {c}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Footer: metrics + actions */}
+              <div style={{
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                paddingTop: 18, marginTop: 18, borderTop: `1px solid ${t.border}`,
+                gap: 16, flexWrap: 'wrap',
+              }}>
+                <div style={{ display: 'flex', gap: 22 }}>
+                  {p.metrics.map(m => (
+                    <div key={m.label}>
+                      <div style={{ fontSize: 20, fontWeight: 700, color: t.fg, lineHeight: 1, letterSpacing: -0.5 }}>{m.value}</div>
+                      <div style={{
+                        fontFamily: t.mono, fontSize: 9.5, color: t.dim, marginTop: 4,
+                        textTransform: 'uppercase', letterSpacing: 0.8,
+                      }}>{m.label}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  {p.demoUrl && (
+                    <a href={p.demoUrl} target="_blank" rel="noreferrer" style={{
+                      fontSize: 12, color: '#fff', background: t.accent, textDecoration: 'none',
+                      fontWeight: 600, padding: '8px 14px', borderRadius: 6,
+                      display: 'inline-flex', alignItems: 'center', gap: 6,
+                    }}>
+                      <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#86efac', boxShadow: '0 0 6px #86efac' }}/>
+                      Live demo
+                    </a>
+                  )}
+                  {p.videoUrl && (
+                    <a href={p.videoUrl} target="_blank" rel="noreferrer" style={{
+                      fontSize: 12, color: t.fg, textDecoration: 'none',
+                      fontWeight: 600, padding: '8px 14px', borderRadius: 6,
+                      border: `1px solid ${t.borderStrong}`,
+                    }}>▶ Watch demo</a>
+                  )}
+                  <a href={p.url} target="_blank" rel="noreferrer" style={{
+                    fontSize: 12, color: t.fg, textDecoration: 'none',
+                    fontWeight: 600, padding: '8px 14px', borderRadius: 6,
+                    border: `1px solid ${t.borderStrong}`,
+                    display: 'inline-flex', alignItems: 'center', gap: 6,
+                  }}>
+                    <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+                    Source
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function Projects({ t }) {
+      return (
+        <div id="projects" style={{ padding: '60px 40px', borderTop: `1px solid ${t.border}`, scrollMarginTop: 80 }}>
+          <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+            <SectionHead t={t} num="2" title="Case Studies" sub="Real systems I've built end-to-end." />
+            {D.projects.map((p, i) => <Project key={p.id} t={t} p={p} idx={i} />)}
+          </div>
+        </div>
+      );
+    }
+
+    function Timeline({ t }) {
+      return (
+        <div id="timeline" style={{ padding: '60px 40px', borderTop: `1px solid ${t.border}`, background: t.paper, scrollMarginTop: 80 }}>
+          <div style={{ maxWidth: 720, margin: '0 auto' }}>
+            <SectionHead t={t} num="3" title="Timeline" sub="How I got here." />
+            <PFTimeline theme={{ ...t, accent: t.accent }} />
+          </div>
+        </div>
+      );
+    }
+
+    function Writing({ t }) {
+      return (
+        <div id="writing" style={{ padding: '60px 40px', borderTop: `1px solid ${t.border}`, scrollMarginTop: 80 }}>
+          <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+            <SectionHead t={t} num="4" title="Writing" sub="Notes from things I shipped, broke, and fixed." />
+            <PFBlog theme={t} />
+          </div>
+        </div>
+      );
+    }
+
+    function Stats({ t }) {
+      const g = D.github_stats;
+      return (
+        <div style={{ padding: '60px 40px', borderTop: `1px solid ${t.border}`, background: t.paper }}>
+          <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+            <SectionHead t={t} num="5" title="GitHub Activity" sub="A lightweight signal of how I work." />
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 16 }}>
+              <div style={{ padding: 24, borderRadius: 10, background: '#0a1628', color: '#fff' }}>
+                <div style={{ fontFamily: t.mono, fontSize: 11, color: '#94a3b8', marginBottom: 8 }}>// language_breakdown</div>
+                <div style={{ display: 'flex', height: 6, borderRadius: 3, overflow: 'hidden', marginBottom: 16 }}>
+                  {g.languages.map(l => <div key={l.name} style={{ width: `${l.pct}%`, background: l.color }} />)}
+                </div>
+                {g.languages.map(l => (
+                  <div key={l.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid #1e293b' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ width: 8, height: 8, borderRadius: '50%', background: l.color }} />
+                      <span style={{ fontSize: 13 }}>{l.name}</span>
+                    </div>
+                    <span style={{ fontFamily: t.mono, fontSize: 12, color: '#94a3b8' }}>{l.pct}%</span>
+                  </div>
+                ))}
+              </div>
+              {[{ v: g.repos, l: 'Public repositories' }, { v: g.contributions, l: 'Contributions / year' }, { v: g.streak, l: 'Day streak' }].map(s => (
+                <div key={s.l} style={{
+                  padding: 24, borderRadius: 10, background: t.bg, border: `1px solid ${t.border}`,
+                  display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+                }}>
+                  <div style={{ fontSize: 48, fontWeight: 700, color: t.fg, lineHeight: 1, letterSpacing: -1 }}>{s.v}</div>
+                  <div style={{ fontSize: 12, color: t.dim, marginTop: 12 }}>{s.l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function Footer({ t }) {
+      return (
+        <div id="contact" style={{ padding: '72px 40px', borderTop: `1px solid ${t.border}`, background: '#0a1628', color: '#fff', scrollMarginTop: 80 }}>
+          <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 24 }}>
+            <div>
+              <div style={{ fontFamily: t.mono, fontSize: 11, color: '#60a5fa', marginBottom: 8 }}>// let's connect</div>
+              <h3 style={{ fontSize: 32, fontWeight: 700, margin: 0, letterSpacing: -0.8 }}>Got a backend problem?</h3>
+              <div style={{ fontSize: 15, color: '#94a3b8', marginTop: 6 }}>Open to internships starting Q1 2026.</div>
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <a href={`mailto:${D.email}`} style={{
+                padding: '12px 20px', background: '#fff', color: '#0a1628',
+                textDecoration: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14,
+              }}>{D.email}</a>
+              <a href={D.githubUrl} target="_blank" rel="noreferrer" style={{
+                padding: '12px 20px', background: 'transparent', color: '#fff',
+                textDecoration: 'none', borderRadius: 8, border: '1px solid #334155',
+                fontWeight: 600, fontSize: 14,
+              }}>GitHub →</a>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [dark, setDark] = useState(() => {
+        try { return localStorage.getItem('huy-theme') === 'dark'; } catch (e) { return false; }
+      });
+      useEffect(() => {
+        document.body.classList.toggle('dark', dark);
+        try { localStorage.setItem('huy-theme', dark ? 'dark' : 'light'); } catch (e) {}
+      }, [dark]);
+      const t = dark ? darkTheme : lightTheme;
+      return (
+        <div style={{ background: t.bg, color: t.fg, minHeight: '100vh', transition: 'background .25s, color .25s' }}>
+          <Header t={t} dark={dark} setDark={setDark} />
+          <Hero t={t} />
+          <Stack t={t} />
+          <Projects t={t} />
+          <Timeline t={t} />
+          <Writing t={t} />
+          <Stats t={t} />
+          <Footer t={t} />
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
